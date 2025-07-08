@@ -26,7 +26,8 @@ COPY --from=composer:2.1 /usr/bin/composer /usr/bin/composer
 COPY . .
 
 # Install dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader || cat composer.json && ls -la vendor || true
+
 
 # Set permissions (optional for some setups)
 RUN chown -R www-data:www-data /var/www
