@@ -26,7 +26,11 @@ COPY --from=composer:2.1 /usr/bin/composer /usr/bin/composer
 COPY . .
 
 # Install dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader || cat composer.json && ls -la vendor || true
+# Install dependencies (show logs if fails)
+RUN composer install || (echo "Composer failed" && cat composer.json && exit 1)
+
+# Copy env and generate key (only after vendor is created)
+RUN cp .env.example .env && ls -la vendor && php artisan key:generate || (echo "Key generate failed" && exit 1)
 
 
 # Set permissions (optional for some setups)
